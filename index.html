@@ -12,23 +12,43 @@
 <body>
   <h1>Donate</h1>
   <form id="donate-form">
-    <label for="donate-name">Nhap ten cua ban:</label>
+    <label for="donate-name">Nhập tên của bạn:</label>
     <input type="text" name="donate-name" id="donate-name">
-    <label for="donate-amount">Nhap so tien:</label>
+    <label for="donate-amount">Nhập số tiền:</label>
     <input type="text" name="donate-amount" id="donate-amount">
     <input type="submit" value="Submit">
   </form>
 
   <hr>
 
-  <h1 id="donate-view"></h1>
+  <h1>Top Donors</h1>
+  <ul id="donate-list"></ul>
 </body>
 
 <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
   integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
 <script>
+  const list = document.getElementById('donate-list')
+  const cachedList = localStorage.getItem('DONATE_LIST')
+  if (cachedList) {
+    // console.log("cachedList")
+    const splitList = cachedList.split(';')
+    splitList.forEach(htmlString => {
+      const item = document.createElement('li')
+      item.innerHTML = htmlString
+      list.append(item)
+    })
+
+    if (splitList.length > 5) { localStorage.removeItem('DONATE_LIST') }
+  }
+
+  const htmlStringify = (htmlCollection) => {
+    // https://stackoverflow.com/a/11125928
+    return [].map.call(htmlCollection, (node) => node.textContent || node.innerText || "").join(";");
+  }
+
   const socket = io()
-  console.log(io)
+  // console.log(io)
 
   const form = document.getElementById('donate-form')
   const nameInput = document.getElementById('donate-name')
@@ -45,20 +65,21 @@
 
     nameInput.value = ''
     amountInput.value = ''
+
   })
 
-  const view = document.getElementById('donate-view')
   socket.on('user-donate', (data) => {
     // console.log('chay')
-    const { message } = data
-    const name = document.createElement('h2')
-    name.innerText = message.name
-    const amount = document.createElement('h2')
-    amount.innerText = message.amount
 
-    view.appendChild(name)
-    view.appendChild(amount)
+    const { message } = data
+    const { name, amount } = message
+    const item = document.createElement('li')
+    item.textContent = `${name} - ${amount}`
+
+    list.insertBefore(item, list.children[0])
+    localStorage.setItem('DONATE_LIST', htmlStringify(list.children))
   })
+  new Audio('static/donate.mp3')
 </script>
 
 </html>
