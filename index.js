@@ -1,5 +1,7 @@
 const experss = require('express')
 const app = experss()
+var cors = require('cors')
+app.use(cors())
 const port = process.env.PORT || 3000
 const server = app.listen(port)
 const { Server } = require('socket.io')
