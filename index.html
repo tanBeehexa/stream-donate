@@ -29,7 +29,6 @@
 <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
   integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
 <script>
-  const donateMusic = new Audio('https://docs.google.com/uc?export=download&id=1Jevmk6eFLCafacya7wmcXCbbSeuxAiHI')
   const list = document.getElementById('donate-list')
   const cachedList = localStorage.getItem('DONATE_LIST')
   if (cachedList) {
@@ -94,7 +93,6 @@
 
   socket.on('user-donate', (data) => {
     // console.log('chay')
-    donateMusic.play()
 
     const { message } = data
     const { name, amount } = message
@@ -106,9 +104,10 @@
 
     // Record function
     // var blob = new Blob([arrayBuffer], { 'type': 'audio/ogg; codecs=opus' });
-    // var audio = document.createElement('audio');
+    var audio = document.createElement('audio');
+    audio.src = "https://docs.google.com/uc?export=download&id=1Jevmk6eFLCafacya7wmcXCbbSeuxAiHI";
     // audio.src = window.URL.createObjectURL(blob);
-    // audio.play();
+    audio.play();
   })
 </script>
 
