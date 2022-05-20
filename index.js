@@ -14,7 +14,7 @@ io.sockets.on('connection', (socket) => {
 
   socket.on('on-donate', (data) => {
     // console.log(data)
-    io.emit('user-donate', data)
+    io.sockets.emit('user-donate', data)
   })
 })
 
