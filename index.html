@@ -24,11 +24,17 @@
   <h1>Top Donors</h1>
   <ul id="donate-list"></ul>
 
+  <!-- <audio id="donate-music">
+    <source src="https://docs.google.com/uc?export=download&id=1Jevmk6eFLCafacya7wmcXCbbSeuxAiHI">
+  </audio> -->
 </body>
 
 <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
   integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
 <script>
+  // const music = document.getElementById('donate-music')
+  const music = new Audio('https://docs.google.com/uc?export=download&id=1Jevmk6eFLCafacya7wmcXCbbSeuxAiHI')
+
   const list = document.getElementById('donate-list')
   const cachedList = localStorage.getItem('DONATE_LIST')
   if (cachedList) {
@@ -67,6 +73,7 @@
     nameInput.value = ''
     amountInput.value = ''
   })
+
   // Record function
   // var constraints = { audio: true };
   // navigator.mediaDevices.getUserMedia(constraints).then(function (mediaStream) {
@@ -93,6 +100,7 @@
 
   socket.on('user-donate', (data) => {
     // console.log('chay')
+    music.play()
 
     const { message } = data
     const { name, amount } = message
@@ -104,10 +112,9 @@
 
     // Record function
     // var blob = new Blob([arrayBuffer], { 'type': 'audio/ogg; codecs=opus' });
-    var audio = document.createElement('audio');
-    audio.src = "https://docs.google.com/uc?export=download&id=1Jevmk6eFLCafacya7wmcXCbbSeuxAiHI";
+    // var audio = document.createElement('audio');
     // audio.src = window.URL.createObjectURL(blob);
-    audio.play();
+    // audio.play();
   })
 </script>
 
