@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donate</title>
+</head>
+
+<body>
+  <h1>Donate</h1>
+  <form action="" id="donate-form">
+    <label for="donate-name">Nhap ten cua ban:</label>
+    <input type="text" name="donate-name" id="donate-name">
+    <label for="donate-amount">Nhap so tien:</label>
+    <input type="text" name="donate-amount" id="donate-amount">
+    <input type="submit" value="Submit">
+  </form>
+
+  <hr>
+
+  <h1 id="donate-view"></h1>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io()
+  console.log(io)
+
+  const form = document.getElementById('donate-form')
+  const nameInput = document.getElementById('donate-name')
+  const amountInput = document.getElementById('donate-amount')
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault()
+
+    const message = {
+      name: nameInput.value,
+      amount: amountInput.value,
+    }
+    socket.emit('on-donate', { message })
+
+    nameInput.value = ''
+    amountInput.value = ''
+  })
+
+  const view = document.getElementById('donate-view')
+  socket.on('user-donate', (data) => {
+    // console.log('chay')
+    const { message } = data
+    const name = document.createElement('h2')
+    name.innerText = message.name
+    const amount = document.createElement('h2')
+    amount.innerText = message.amount
+
+    view.appendChild(name)
+    view.appendChild(amount)
+  })
+</script>
+
+</html>
