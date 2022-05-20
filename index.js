@@ -15,28 +15,9 @@ app.use(function (req, res, next) {
   next();
 });
 
-const cors_proxy = require('cors-anywhere');
-var host = process.env.HOST || '0.0.0.0';
-cors_proxy.createServer({
-  originWhitelist: [], // Allow all origins
-  requireHeader: ['origin', 'x-requested-with'],
-  removeHeaders: [
-    'cookie',
-    'cookie2',
-    // Strip Heroku-specific headers
-    'x-request-start',
-    'x-request-id',
-    'via',
-    'connect-time',
-    'total-route-time',
-    // Other Heroku added debug headers
-    // 'x-forwarded-for',
-    // 'x-forwarded-proto',
-    // 'x-forwarded-port',
-  ],
-  redirectSameOrigin: true,
-}).listen(port, host, function () {
-  console.log('Running CORS Anywhere on ' + host + ':' + port);
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html')
+})
 
   app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
