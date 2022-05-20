@@ -16,6 +16,19 @@ io.sockets.on('connection', (socket) => {
     // console.log(data)
     io.sockets.emit('user-donate', data)
   })
+
+  socket.on('on-donate-countdown', (data) => {
+    let counter = data.counter;
+    let WinnerCountdown = setInterval(() => {
+      console.log("chay", counter)
+      io.sockets.emit('counter', counter);
+      counter--
+      if (counter === 0) {
+        io.sockets.emit('user-donate-finish')
+        clearInterval(WinnerCountdown);
+      }
+    }, 1000);
+  })
 })
 
 // app.listen(port, () => {

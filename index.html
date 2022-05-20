@@ -12,28 +12,53 @@
 <body>
   <h1>Donate</h1>
   <form id="donate-form">
-    <label for="donate-name">Nhập tên của bạn:</label>
-    <input type="text" name="donate-name" id="donate-name">
-    <label for="donate-amount">Nhập số tiền:</label>
-    <input type="text" name="donate-amount" id="donate-amount">
+    <div>
+      <label for="donate-name">Nhập tên của bạn:</label>
+      <input type="text" name="donate-name" id="donate-name">
+    </div>
+    <div>
+      <label for="donate-amount">Nhập số tiền:</label>
+      <input type="text" name="donate-amount" id="donate-amount">
+    </div>
+    <div>
+      <label for="donate-msg">Nhập lời nhắn:</label>
+      <input type="text" name="donate-msg" id="donate-msg"
+        style="width: 300px; height: 100px; word-wrap: break-word; word-break: break-all;">
+    </div>
     <input type="submit" value="Submit">
   </form>
+
+  <div id="donate-display" style="display: none;">
+    <hr>
+    <h1 id="donate-display-info"></h1>
+    <img id="donate-gif" src="https://s8.gifyu.com/images/donate_gif.gif"
+      rel:animated_src="https://s8.gifyu.com/images/donate_gif.gif" rel:auto_play="1" style="opacity: 0;" />
+    <p id="donate-display-msg" style="font-size: 40px; width: 800px; word-wrap: break-word;"></p>
+  </div>
 
   <hr>
 
   <h1>Top Donors</h1>
   <ul id="donate-list"></ul>
-
-  <!-- <audio id="donate-music">
-    <source src="https://docs.google.com/uc?export=download&id=1Jevmk6eFLCafacya7wmcXCbbSeuxAiHI">
-  </audio> -->
 </body>
 
 <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
   integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/libgif@0.0.3/libgif.min.js"
+  crossorigin="anonymous"></script>
+
 <script>
+  // https://stackoverflow.com/a/2901298
+  function formatNumber(x) {
+    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".");
+  }
+
   // const music = document.getElementById('donate-music')
   const music = new Audio('https://docs.google.com/uc?export=download&id=1Jevmk6eFLCafacya7wmcXCbbSeuxAiHI')
+  const rub = new SuperGif({
+    gif: document.getElementById("donate-gif"),
+    progressbar_height: 0,
+  });
 
   const list = document.getElementById('donate-list')
   const cachedList = localStorage.getItem('DONATE_LIST')
@@ -60,6 +85,7 @@
   const form = document.getElementById('donate-form')
   const nameInput = document.getElementById('donate-name')
   const amountInput = document.getElementById('donate-amount')
+  const msgInput = document.getElementById('donate-msg')
 
   form.addEventListener('submit', (e) => {
     e.preventDefault()
@@ -67,11 +93,13 @@
     const message = {
       name: nameInput.value,
       amount: amountInput.value,
+      msg: msgInput.value,
     }
     socket.emit('on-donate', { message })
 
     nameInput.value = ''
     amountInput.value = ''
+    msgInput.value = ''
   })
 
   // Record function
@@ -98,12 +126,21 @@
   //   }, 5000);
   // });
 
+  const donateDisplay = document.getElementById("donate-display")
+  const donateInfoDisplay = document.getElementById("donate-display-info")
+  const donateMsgDisplay = document.getElementById("donate-display-msg")
   socket.on('user-donate', (data) => {
     // console.log('chay')
-    music.play()
-
     const { message } = data
-    const { name, amount } = message
+    const { name, amount, msg } = message
+
+    music.play()
+    rub.load();
+    donateDisplay.style.display = "inline-block"
+
+    donateInfoDisplay.innerText = `${name} - Đã donate ${formatNumber(Number(amount))} VNĐ`
+    donateMsgDisplay.innerText = msg
+
     const item = document.createElement('li')
     item.textContent = `${name} - ${amount}`
 
@@ -115,7 +152,21 @@
     // var audio = document.createElement('audio');
     // audio.src = window.URL.createObjectURL(blob);
     // audio.play();
+
+    socket.emit('on-donate-countdown', {
+      counter: 15,
+    })
   })
+
+  socket.on('user-donate-finish', () => {
+    // console.log('chay')
+    donateDisplay.style.display = "none"
+    donateMsgDisplay.innerText = null
+  })
+  // Debug 'on-donate-countdown' `index.js`
+  // socket.on('counter', (data) => {
+  //   console.log(data)
+  // })
 </script>
 
 </html>
