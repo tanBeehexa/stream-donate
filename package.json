@@ -1,7 +1,8 @@
 {
   "scripts": {
     "start": "node index.js",
-    "deploy": "git push && git push heroku main"
+    "deploy": "git push && git push heroku main",
+    "log": "heroku logs --tail"
   },
   "dependencies": {
     "express": "^4.18.1",
