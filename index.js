@@ -15,31 +15,57 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html')
-})
+const cors_proxy = require('cors-anywhere');
+var host = process.env.HOST || '0.0.0.0';
+cors_proxy.createServer({
+  originWhitelist: [], // Allow all origins
+  requireHeader: ['origin', 'x-requested-with'],
+  removeHeaders: [
+    'cookie',
+    'cookie2',
+    // Strip Heroku-specific headers
+    'x-request-start',
+    'x-request-id',
+    'via',
+    'connect-time',
+    'total-route-time',
+    // Other Heroku added debug headers
+    // 'x-forwarded-for',
+    // 'x-forwarded-proto',
+    // 'x-forwarded-port',
+  ],
+  redirectSameOrigin: true,
+}).listen(port, host, function () {
+  console.log('Running CORS Anywhere on ' + host + ':' + port);
 
-io.sockets.on('connection', (socket) => {
-  console.log('user connected')
-
-  socket.on('on-donate', (data) => {
-    // console.log(data)
-    io.sockets.emit('user-donate', data)
+  app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html')
   })
 
-  socket.on('on-donate-countdown', (data) => {
-    let counter = data.counter;
-    let WinnerCountdown = setInterval(() => {
-      console.log("chay", counter)
-      io.sockets.emit('counter', counter);
-      counter--
-      if (counter === 0) {
-        io.sockets.emit('user-donate-finish')
-        clearInterval(WinnerCountdown);
-      }
-    }, 1000);
+  io.sockets.on('connection', (socket) => {
+    console.log('user connected')
+
+    socket.on('on-donate', (data) => {
+      // console.log(data)
+      io.sockets.emit('user-donate', data)
+    })
+
+    socket.on('on-donate-countdown', (data) => {
+      let counter = data.counter;
+      let WinnerCountdown = setInterval(() => {
+        console.log("chay", counter)
+        io.sockets.emit('counter', counter);
+        counter--
+        if (counter === 0) {
+          io.sockets.emit('user-donate-finish')
+          clearInterval(WinnerCountdown);
+        }
+      }, 1000);
+    })
   })
-})
+});
+
+
 
 // app.listen(port, () => {
 //   console.log(`Listening on port ${port}`)
