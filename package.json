@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "deploy": "git push && git push heroku main",
     "log": "heroku logs --tail"
   },

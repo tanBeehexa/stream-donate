@@ -11,7 +11,7 @@
 
 <body>
   <h1>Donate</h1>
-  <form action="" id="donate-form">
+  <form id="donate-form">
     <label for="donate-name">Nhap ten cua ban:</label>
     <input type="text" name="donate-name" id="donate-name">
     <label for="donate-amount">Nhap so tien:</label>
@@ -24,7 +24,8 @@
   <h1 id="donate-view"></h1>
 </body>
 
-<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
+  integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
 <script>
   const socket = io()
   console.log(io)
